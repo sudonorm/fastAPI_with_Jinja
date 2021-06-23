@@ -6,12 +6,12 @@ import os
 user_name = os.environ.get("USR")
 pwd = os.environ.get("PWD")
 
-DB_NAME = "dvdrentals"
+DB_NAME = "dvdrental"
 
-DATABASE_URL = "postgresql://"+user_name+":"+pwd+"@localhost:5432/"
+DATABASE_URI = "postgresql://"+user_name+":"+pwd+"@localhost:5432/"
 
 postgres_engine = create_engine(
-    DATABASE_URL, isolation_level="AUTOCOMMIT"
+    DATABASE_URI, isolation_level="AUTOCOMMIT"
 )
 
 def create_database(dbName:str):
@@ -23,16 +23,16 @@ def create_database(dbName:str):
         
         if dbName in dbs:
             print(f'{dbName}{" already exists!"}')
-            SQLALCHEMY_DATABASE_URL = f'{DATABASE_URL}{dbName}'
+            SQLALCHEMY_DATABASE_URI = f'{DATABASE_URI}{dbName}'
             engine = create_engine(
-                        SQLALCHEMY_DATABASE_URL, isolation_level="AUTOCOMMIT")
+                        SQLALCHEMY_DATABASE_URI, isolation_level="AUTOCOMMIT")
 
         else:
-            conn.execute(f'{"CREATE DATABASE "}{dbName}')
+            conn.execute(f'{"CREATE DATABASE "}{dbName}{" WITH ENCODING = "}{"UTF8"}')
             print(f'{"Created: "}{dbName}')
-            SQLALCHEMY_DATABASE_URL = f'{DATABASE_URL}{dbName}'
+            SQLALCHEMY_DATABASE_URI = f'{DATABASE_URI}{dbName}'
             engine = create_engine(
-                        SQLALCHEMY_DATABASE_URL, isolation_level="AUTOCOMMIT")
+                        SQLALCHEMY_DATABASE_URI, isolation_level="AUTOCOMMIT")
     return engine
 
 def drop_database(dbName:str) -> None:
@@ -42,6 +42,8 @@ def drop_database(dbName:str) -> None:
         conn.execute(f'{"DROP DATABASE "}{dbName}')
 
 engine = create_database(DB_NAME)
+
+#drop_database(DB_NAME)
 # print(engine.table_names())
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 

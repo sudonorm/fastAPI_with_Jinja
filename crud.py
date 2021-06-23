@@ -1,14 +1,14 @@
-from models import Base
 from database import engine
-from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import Session
+import models, schemas
 import os
 
+def get_actors(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.Actor).offset(skip).limit(limit).all()
 
 def recreate_database():
-    Base.metadata.drop_all(engine)
+    #Base.metadata.drop_all(engine)
     Base.metadata.create_all(engine)
 
-if __name__ == "__main__":
-    recreate_database()
+# if __name__ == "__main__":
+#     recreate_database()
